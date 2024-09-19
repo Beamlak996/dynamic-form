@@ -1,9 +1,9 @@
-import { Button } from "@/components/ui/button";
+import { DynamicFormPage } from "./pages/dynamic-form-page";
 
 export default function Home() {
   return (
-    <div>
-      <Button>Click me</Button>
+    <div className="min-h-screen w-full" >
+      <DynamicFormPage />      
     </div>
   );
 }
