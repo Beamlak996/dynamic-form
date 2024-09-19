@@ -1,13 +1,34 @@
 import { z } from "zod"
 
-export const dynamicFormSchema = z.object({
+
+const workExperienceSchema = z.discriminatedUnion("hasWorkExperience", [
+  z.object({
+    hasWorkExperience: z.literal(true),
+    companyName: z
+      .string({
+        required_error: "Please enter the company name.",
+        invalid_type_error: "Please enter the company name.",
+      })
+      .min(1, {
+        message: "Please enter the company name.",
+      }),
+  }),
+  z.object({
+    hasWorkExperience: z.literal(false),
+  }),
+]);
+
+const dynamicFormSchema = z.object({
     fullName: z.string().min(1, {
-        message: "Please enter your name."
+        message: "Please enter the fullname."
     })
-})
+}).and(workExperienceSchema)
 
-export type DynamicFormSchema = z.infer<typeof dynamicFormSchema>
+type DynamicFormSchema = z.infer<typeof dynamicFormSchema>
 
-export const dynamicFormSchemaDefaultValues: DynamicFormSchema = {
-    fullName: ""
+const dynamicFormSchemaDefaultValues: DynamicFormSchema = {
+    fullName: "",
+    hasWorkExperience: false
 }
+
+export { dynamicFormSchema, type DynamicFormSchema, dynamicFormSchemaDefaultValues }
