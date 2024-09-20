@@ -18,17 +18,37 @@ const workExperienceSchema = z.discriminatedUnion("hasWorkExperience", [
   }),
 ]);
 
+const languageKnowledgeSchema = z.discriminatedUnion(
+  "languageKnowledge",
+  [
+    z.object({
+      languageKnowledge: z.literal(true),
+      languages: z.array(
+        z.object({
+            name: z.string().min(1, {
+                message: "Please enter the language."
+            })
+        })
+      )
+    }),
+    z.object({
+      languageKnowledge: z.literal(false),
+    }),
+  ]
+);
+
 const dynamicFormSchema = z.object({
     fullName: z.string().min(1, {
         message: "Please enter the fullname."
     })
-}).and(workExperienceSchema)
+}).and(workExperienceSchema).and(languageKnowledgeSchema)
 
 type DynamicFormSchema = z.infer<typeof dynamicFormSchema>
 
 const dynamicFormSchemaDefaultValues: DynamicFormSchema = {
     fullName: "",
-    hasWorkExperience: false
+    hasWorkExperience: false,
+    languageKnowledge: false,
 }
 
 export { dynamicFormSchema, type DynamicFormSchema, dynamicFormSchemaDefaultValues }
