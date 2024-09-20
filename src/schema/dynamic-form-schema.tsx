@@ -18,6 +18,34 @@ const workExperienceSchema = z.discriminatedUnion("hasWorkExperience", [
   }),
 ]);
 
+const educationSchema = z.discriminatedUnion("educationLevel", [
+  z.object({
+    educationLevel: z.literal("noFormalEducation"),
+  }),
+  z.object({
+    educationLevel: z.literal("highSchoolDiploma"),
+    schoolName: z
+      .string({
+        required_error: "Please enter the highschool name.",
+        invalid_type_error: "Please enter the highschool name.",
+      })
+      .min(1, {
+        message: "Please enter the highschool name.",
+      }),
+  }),
+  z.object({
+    educationLevel: z.literal("bachelorsDegree"),
+    universityName: z
+      .string({
+        required_error: "Please enter the university name.",
+        invalid_type_error: "Please enter the university name.",
+      })
+      .min(1, {
+        message: "Please enter the university name.",
+      }),
+  }),
+]);
+
 const languageKnowledgeSchema = z.discriminatedUnion(
   "languageKnowledge",
   [
@@ -41,7 +69,7 @@ const dynamicFormSchema = z.object({
     fullName: z.string().min(1, {
         message: "Please enter the fullname."
     })
-}).and(workExperienceSchema).and(languageKnowledgeSchema)
+}).and(workExperienceSchema).and(languageKnowledgeSchema).and(educationSchema)
 
 type DynamicFormSchema = z.infer<typeof dynamicFormSchema>
 
@@ -49,6 +77,7 @@ const dynamicFormSchemaDefaultValues: DynamicFormSchema = {
     fullName: "",
     hasWorkExperience: false,
     languageKnowledge: false,
+    educationLevel: 'noFormalEducation'
 }
 
 export { dynamicFormSchema, type DynamicFormSchema, dynamicFormSchemaDefaultValues }

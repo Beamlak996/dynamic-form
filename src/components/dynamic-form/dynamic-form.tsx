@@ -27,6 +27,30 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { BookOpen, School, GraduationCap } from "lucide-react"; 
+import { ReusableRadioGroup } from "@/general/reuasable-radio-group";
+
+const educationLevelItems = [
+  {
+    id: "noFormalEducation",
+    label: "No Formal Education",
+    description: "You haven't completed any formal education.",
+    icon: <BookOpen className="h-4 w-4" />, 
+  },
+  {
+    id: "highSchoolDiploma",
+    label: "High School Diploma",
+    description: "You have completed high school education.",
+    icon: <School className="h-4 w-4" />, 
+  },
+  {
+    id: "bachelorsDegree",
+    label: "Bachelors Degree",
+    description: "You hold a bachelor's degree from a university.",
+    icon: <GraduationCap className="h-4 w-4" />, 
+  },
+];
+
 
 export const DynamicForm = () => {
   const form = useForm<DynamicFormSchema>({
@@ -45,7 +69,12 @@ export const DynamicForm = () => {
     name: "languageKnowledge",
   });
 
-  const { fields, append, remove, replace } = useFieldArray({
+  const educationLevel = useWatch({
+    control: form.control,
+    name: "educationLevel",
+  });
+
+  const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "languages",
   });
@@ -54,10 +83,6 @@ export const DynamicForm = () => {
     console.log(values);
   };
 
-  const handleLanguagesChange = (values: string[]) => {
-    // Replace existing languages with the new values
-    replace(values.map((name) => ({ name })));
-  };
 
   return (
     <Card>
@@ -68,7 +93,7 @@ export const DynamicForm = () => {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="space-y-4">
+            <div className="space-y-2">
               <FormField
                 name="fullName"
                 control={form.control}
@@ -167,7 +192,7 @@ export const DynamicForm = () => {
                                   type="button"
                                   variant="outline"
                                   size="icon"
-                                  onClick={() => remove(index)} 
+                                  onClick={() => remove(index)}
                                   className="flex-shrink-0 text-rose-500 hover:text-rose-700 hover:bg-rose-50 border-rose-200"
                                   aria-label="Remove Language"
                                 >
@@ -192,6 +217,61 @@ export const DynamicForm = () => {
                     Add Language
                   </Button>
                 </>
+              )}
+              <FormField
+                name="educationLevel"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Education Level</FormLabel>
+                    <FormControl>
+                      <ReusableRadioGroup
+                        items={educationLevelItems}
+                        defaultValue={field.value}
+                        onValueChange={field.onChange}
+                        grid={3}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {educationLevel === "highSchoolDiploma" && (
+                <FormField
+                  name="schoolName"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>High School Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="Enter the high school name"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {educationLevel === "bachelorsDegree" && (
+                <FormField
+                  name="universityName"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>University Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="Enter the university name"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               )}
             </div>
             <Button type="submit">Submit</Button>
